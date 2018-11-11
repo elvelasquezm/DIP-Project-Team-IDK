@@ -7,38 +7,36 @@ class MainWindow:
         self.master = master
         master.title("DIP Project GUI")
 
+        #All the widgets which make up the initial window
+
         #TOP LEFT
         self.ImageChoose = tk.Button(master, text="Choose Image", width=60,
                                      command=self.choose_image, background="white")
-        self.ImageChoose.grid(row=0, column=0, columnspan=3, rowspan=3, pady=10, sticky= tk.N)
+        self.ImageChoose.grid(row=0, column=0, columnspan=3, rowspan=2, pady=10, sticky= tk.N)
 
         #BOTTOM
         self.BOTTOM=tk.Frame(master)
         self.BOTTOM.grid(row=4, column=0, columnspan=6)
 
         #BOTTOM LEFT
+        self.image1 = Image.open("test_images/Lenna.png")
+        self.photo1 = ImageTk.PhotoImage(self.image1)
 
-        image = Image.open("test_images/Lenna.png")
-        photo = ImageTk.PhotoImage(image)
-
-        self.photolabel=tk.Label(self.BOTTOM, image=photo, width = 640, height=480)
-        self.photolabel.image = photo
-        self.photolabel.grid(row=0, column=0, columnspan=3, sticky=tk.E)
+        self.photolabel1=tk.Label(self.BOTTOM, image=self.photo1, width = 640, height=480)
+        self.photolabel1.image = self.photo1
+        self.photolabel1.grid(row=0, column=0, columnspan=3, sticky=tk.E)
 
         # BOTTOM RIGHT
+        self.image2 = Image.open("test_images/Lenna0.jpg")
+        self.photo2 = ImageTk.PhotoImage(self.image2)
 
-        image2 = Image.open("test_images/Lenna0.jpg")
-        photo2 = ImageTk.PhotoImage(image2)
-
-        self.photolabel2=tk.Label(self.BOTTOM, image=photo2, width=640, height=480)
-        self.photolabel2.image = photo2
+        self.photolabel2=tk.Label(self.BOTTOM, image=self.photo2, width=640, height=480)
+        self.photolabel2.image = self.photo2
         self.photolabel2.grid(row = 0, column=3, columnspan=3, sticky=tk.E)
 
         #self.sublabel2 = tk.Label(self.subwindow, bg="black", height=15, width=30,
         #                         font=("Courier, 20"), text="result image here")
         #self.sublabel2.grid(row=0, column=3, columnspan=3, sticky=tk.E)
-
-
 
         #TOP RIGHT
 
@@ -71,6 +69,7 @@ class MainWindow:
         #self.choicesWindow.grid(row=0, column=4, rowspan=3, columnspan=2)
 
     def choose_oper(self):
+        #Chooses sharpen or smooth
         print("Chose: " + self.OptionChoice.get())
         if(self.OptionChoice.get() == "Sharpen"):
             self.sharpen_choice()
@@ -79,8 +78,9 @@ class MainWindow:
             self.smooth_choice()
 
     def sharpen_choice(self):
+        # Loads all the parameter fields for the sharpen operation
+        # Apply and Save button to apply and save the right image
         print("sharpen")
-
 
         self.choicesWindow.grid_forget()
 
@@ -100,13 +100,15 @@ class MainWindow:
         self.InputField3 = tk.Entry(self.choicesWindow, text="input3", background="white")
         self.InputField3.grid(row=2, column=2, pady=5, padx=5, sticky=tk.E + tk.W)
 
-        self.ApplyButton = tk.Button(self.TOPRIGHT, text="Apply", background="white")
+        self.ApplyButton = tk.Button(self.TOPRIGHT, text="Apply", background="white", command=self.apply)
         self.ApplyButton.grid(row=2, column=0, sticky=tk.E)
 
         self.SaveButton = tk.Button(self.TOPRIGHT, text="Save Image", background="white")
         self.SaveButton.grid(row=2, column=0, sticky=tk.W)
 
     def smooth_choice(self):
+        #Loads all the parameter fields for the smooth operation
+        #Apply and Save button to apply and save the right image
         print("smooth")
 
         self.choicesWindow.grid_forget()
@@ -127,16 +129,42 @@ class MainWindow:
         self.InputField3 = tk.Entry(self.choicesWindow, text="input3", background="white")
         self.InputField3.grid(row=2, column=2, pady=5, padx=5, sticky=tk.E + tk.W)
 
-        self.ApplyButton = tk.Button(self.TOPRIGHT, text="Apply", background="white")
+        self.ApplyButton = tk.Button(self.TOPRIGHT, text="Apply", background="white", command=self.apply)
         self.ApplyButton.grid(row=2, column=0, sticky=tk.E)
 
         self.SaveButton = tk.Button(self.TOPRIGHT, text="Save Image", background="white")
         self.SaveButton.grid(row=2, column=0, sticky=tk.W)
 
     def choose_image(self):
+        #Changes the left image
+
+        #prompts the user for an image path
         path = filedialog.askopenfile()
         print(path)
+        print(path.name)
 
+        #Label for image path name
+        self.ImagePath = tk.Label(self.master, text=path.name, bg="snow")
+        self.ImagePath.grid(row=2, column=0, columnspan=3, stick=tk.N)
+
+        #Load the image and create a thumbnail
+        self.image1 = Image.open(path.name)
+        self.image1.thumbnail((640, 480))
+        self.photo1 = ImageTk.PhotoImage(self.image1)
+
+        #Actual Image
+        self.photolabel1 = tk.Label(self.BOTTOM, image=self.photo1, width=640, height=480)
+        self.photolabel1.image = self.photo1
+        self.photolabel1.grid(row=0, column=0, columnspan=3, sticky=tk.E)
+
+    def apply(self):
+        #Here the shapen/smooth filter will be applied and the right image will be updated
+
+        print("apply")
+        self.photo2=self.photo1
+        self.photolabel2.configure(image=self.photo2)
+
+#Creates the entire window and runs it
 root = tk.Tk()
 root.configure(background="snow")
 main = MainWindow(root)
